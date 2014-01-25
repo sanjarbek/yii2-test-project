@@ -1,17 +1,16 @@
 <?php
+
 $rootDir = __DIR__ . '/../..';
 
 $params = array_merge(
-	require($rootDir . '/common/config/params.php'),
-	require($rootDir . '/common/config/params-local.php'),
-	require(__DIR__ . '/params.php'),
-	require(__DIR__ . '/params-local.php')
+		require($rootDir . '/common/config/params.php'), require($rootDir . '/common/config/params-local.php'), require(__DIR__ . '/params.php'), require(__DIR__ . '/params-local.php')
 );
 
 return [
 	'id' => 'app-frontend',
 	'basePath' => dirname(__DIR__),
 	'vendorPath' => $rootDir . '/vendor',
+	'language' => 'ru',
 	'controllerNamespace' => 'frontend\controllers',
 	'extensions' => require($rootDir . '/vendor/yiisoft/extensions.php'),
 	'components' => [

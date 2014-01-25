@@ -12,8 +12,10 @@ use yii\helpers\Security;
 
 class SiteController extends Controller
 {
-	public function behaviors()
-	{
+
+	public $layout = 'main.php';
+
+	public function behaviors() {
 		return [
 			'access' => [
 				'class' => \yii\web\AccessControl::className(),
@@ -34,8 +36,7 @@ class SiteController extends Controller
 		];
 	}
 
-	public function actions()
-	{
+	public function actions() {
 		return [
 			'error' => [
 				'class' => 'yii\web\ErrorAction',
@@ -47,13 +48,18 @@ class SiteController extends Controller
 		];
 	}
 
-	public function actionIndex()
-	{
+	public function beforeAction($action) {
+		if ($action->id == 'error') {
+			$this->layout = 'iframe.php';
+		}
+		return parent::beforeAction($action);
+	}
+
+	public function actionIndex() {
 		return $this->render('index');
 	}
 
-	public function actionLogin()
-	{
+	public function actionLogin() {
 		if (!\Yii::$app->user->isGuest) {
 			$this->goHome();
 		}
@@ -63,37 +69,33 @@ class SiteController extends Controller
 			return $this->goBack();
 		} else {
 			return $this->render('login', [
-				'model' => $model,
+						'model' => $model,
 			]);
 		}
 	}
 
-	public function actionLogout()
-	{
+	public function actionLogout() {
 		Yii::$app->user->logout();
 		return $this->goHome();
 	}
 
-	public function actionContact()
-	{
+	public function actionContact() {
 		$model = new ContactForm;
 		if ($model->load($_POST) && $model->contact(Yii::$app->params['adminEmail'])) {
 			Yii::$app->session->setFlash('success', 'Thank you for contacting us. We will respond to you as soon as possible.');
 			return $this->refresh();
 		} else {
 			return $this->render('contact', [
-				'model' => $model,
+						'model' => $model,
 			]);
 		}
 	}
 
-	public function actionAbout()
-	{
+	public function actionAbout() {
 		return $this->render('about');
 	}
 
-	public function actionSignup()
-	{
+	public function actionSignup() {
 		$model = new User();
 		$model->setScenario('signup');
 		if ($model->load($_POST) && $model->save()) {
@@ -103,12 +105,11 @@ class SiteController extends Controller
 		}
 
 		return $this->render('signup', [
-			'model' => $model,
+					'model' => $model,
 		]);
 	}
 
-	public function actionRequestPasswordReset()
-	{
+	public function actionRequestPasswordReset() {
 		$model = new User();
 		$model->scenario = 'requestPasswordResetToken';
 		if ($model->load($_POST) && $model->validate()) {
@@ -120,15 +121,14 @@ class SiteController extends Controller
 			}
 		}
 		return $this->render('requestPasswordResetToken', [
-			'model' => $model,
+					'model' => $model,
 		]);
 	}
 
-	public function actionResetPassword($token)
-	{
+	public function actionResetPassword($token) {
 		$model = User::find([
-			'password_reset_token' => $token,
-			'status' => User::STATUS_ACTIVE,
+					'password_reset_token' => $token,
+					'status' => User::STATUS_ACTIVE,
 		]);
 
 		if (!$model) {
@@ -142,15 +142,14 @@ class SiteController extends Controller
 		}
 
 		return $this->render('resetPassword', [
-			'model' => $model,
+					'model' => $model,
 		]);
 	}
 
-	private function sendPasswordResetEmail($email)
-	{
+	private function sendPasswordResetEmail($email) {
 		$user = User::find([
-			'status' => User::STATUS_ACTIVE,
-			'email' => $email,
+					'status' => User::STATUS_ACTIVE,
+					'email' => $email,
 		]);
 
 		if (!$user) {
@@ -160,12 +159,13 @@ class SiteController extends Controller
 		$user->password_reset_token = Security::generateRandomKey();
 		if ($user->save(false)) {
 			return \Yii::$app->mail->compose('passwordResetToken', ['user' => $user])
-				->setFrom([\Yii::$app->params['supportEmail'] => \Yii::$app->name . ' robot'])
-				->setTo($email)
-				->setSubject('Password reset for ' . \Yii::$app->name)
-				->send();
+							->setFrom([\Yii::$app->params['supportEmail'] => \Yii::$app->name . ' robot'])
+							->setTo($email)
+							->setSubject('Password reset for ' . \Yii::$app->name)
+							->send();
 		}
 
 		return false;
 	}
+
 }
