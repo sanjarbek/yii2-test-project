@@ -7,7 +7,6 @@ use yii\widgets\DetailView;
  * @var yii\web\View $this
  * @var common\models\Test $model
  */
-
 $this->title = $model->name;
 $this->params['breadcrumbs'][] = ['label' => 'Tests', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
@@ -18,20 +17,27 @@ $this->params['breadcrumbs'][] = $this->title;
 
 	<p>
 		<?= Html::a('Update', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
-		<?php echo Html::a('Delete', ['delete', 'id' => $model->id], [
+		<?php
+		echo Html::a('Delete', ['delete', 'id' => $model->id], [
 			'class' => 'btn btn-danger',
 			'data-confirm' => Yii::t('app', 'Are you sure to delete this item?'),
 			'data-method' => 'post',
-		]); ?>
+		]);
+		?>
 	</p>
 
-	<?php echo DetailView::widget([
+	<?php
+	echo DetailView::widget([
 		'model' => $model,
 		'attributes' => [
 			'id',
 			'name',
-			'content:ntext',
+			[
+				'name' => 'content',
+				'format' => 'html',
+			],
 		],
-	]); ?>
+	]);
+	?>
 
 </div>
