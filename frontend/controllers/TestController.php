@@ -26,22 +26,34 @@ class TestController extends Controller
 		];
 	}
 
-	public function actionImageupload() {
-		$directory = \yii::$app->basePath . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . 'images/';
-		$file = md5(date('YmdHis')) . '.' . pathinfo(@$_FILES['file']['name'], PATHINFO_EXTENSION);
-
-		if (move_uploaded_file(@$_FILES['file']['tmp_name'], $directory . $file)) {
-			$array = [
-				'filelink' => '/images/' . $file
-			];
-		} else {
-			$array = [
-				'error' => 'Hi! It\'s error message',
-				'anothermessage' => 'And another message.'
-			];
-		}
-		return Json::encode($array);
+	public function actions() {
+		return [
+			'imageupload' => [
+				'class' => 'frontend\actions\ImageUploadAction',
+				'uploadPath' => \yii::$app->basePath . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR,
+				'uploadUrl' => '/images',
+				'uploadCreate' => true,
+				'permissions' => 0755,
+			],
+		];
 	}
+
+//	public function actionImageupload() {
+//		$directory = \yii::$app->basePath . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . 'images/';
+//		$file = md5(date('YmdHis')) . '.' . pathinfo(@$_FILES['file']['name'], PATHINFO_EXTENSION);
+//
+//		if (move_uploaded_file(@$_FILES['file']['tmp_name'], $directory . $file)) {
+//			$array = [
+//				'filelink' => '/images/' . $file
+//			];
+//		} else {
+//			$array = [
+//				'error' => 'Hi! It\'s error message',
+//				'anothermessage' => 'And another message.'
+//			];
+//		}
+//		return Json::encode($array);
+//	}
 
 	public function actionFileupload() {
 		$directory = \yii::$app->basePath . DIRECTORY_SEPARATOR . 'web' . DIRECTORY_SEPARATOR . 'images/';
